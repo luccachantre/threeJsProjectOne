@@ -33,7 +33,7 @@ const pointLight = new THREE.PointLight(0xffffff);
 pointLight.position.set(0, 5, 0);
 pointLight.intensity = 200;
 
-const ambientLight = new THREE.AmbientLight(0xffffff);
+const ambientLight = new THREE.AmbientLight(0xffffff, 4);
 scene.add(pointLight, ambientLight); 
 
 const lightHelper = new THREE.PointLightHelper(pointLight); //creates a basic wireframe polygon to show the location of the point light
@@ -42,10 +42,11 @@ scene.add(lightHelper, gridHelper);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
+const starGeometry = new THREE.SphereGeometry(0.25);
+const starMaterial = new THREE.MeshStandardMaterial( {color: 0xffffff} );
+
 function addStar() {
-  const geometry = new THREE.SphereGeometry(0.25);
-  const material = new THREE.MeshStandardMaterial( {color: 0xffffff} );
-  const star = new THREE.Mesh(geometry, material);
+  const star = new THREE.Mesh(starGeometry, starMaterial);
 
   const [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(100));
   star.position.set(x, y, z);
@@ -53,6 +54,14 @@ function addStar() {
 }
 
 Array(200).fill().forEach(addStar);
+
+const spaceTexture = new THREE.TextureLoader().load('galaxy.jpg');
+//"it's worth noting that you can also pass a callback function here
+// to be notified when the image is done loading. That's useful if you wanna show a loading bar
+//if your scene relies on a lot of static assets."
+scene.background = spaceTexture; 
+//color was distorted (much lighter than original image) so I just set background to a solid color
+scene.background = new THREE.Color(0x230055);
 
 function animate() {
   requestAnimationFrame(animate);
